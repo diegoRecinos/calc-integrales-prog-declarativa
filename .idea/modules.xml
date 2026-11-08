@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/tarea-calculadora-integrales-prog-declarativa.iml" filepath="$PROJECT_DIR$/tarea-calculadora-integrales-prog-declarativa.iml" />
+      <module fileurl="file://$PROJECT_DIR$/calc-integrales-prog-declarativa.iml" filepath="$PROJECT_DIR$/calc-integrales-prog-declarativa.iml" />
     </modules>
   </component>
 </project>
