@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="calc-integrales-prog-declarativa:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/calc_integrales_prog_declarativa_jar</output-path>
+    <root id="archive" name="calc-integrales-prog-declarativa.jar">
+      <element id="module-output" name="calc-integrales-prog-declarativa" />
+    </root>
+  </artifact>
+</component>
