@@ -22,7 +22,6 @@ import java.util.concurrent.ExecutionException;
  * - Muestra los resultados calculados por el motor declarativo (primitiva, integral definida, área).
  * - Renderiza la gráfica de la función en {@link PlotPanel} a partir de los puntos evaluados en Prolog.
  *
- * NOTA ARQUITECTÓNICA PARA LA EXPOSICIÓN:
  * Toda la lógica matemática (integración simbólica, evaluación y cálculo de área)
  * reside exclusivamente en la base de conocimiento SWI-Prolog (src/prolog/integrales.pl).
  */
