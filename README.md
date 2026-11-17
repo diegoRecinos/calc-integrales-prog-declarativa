@@ -1,6 +1,16 @@
-# Sistema para resolver integrales — Proyecto final 02/2026
+# Sistema para resolver integrales — Tarea final 02/2026
 
 Base de conocimiento en SWI-Prolog, interfaz gráfica Java Swing, cálculo de primitivas simbólicas, integral definida, área geométrica aproximada con cambio de signo, visualización gráfica de la curva y trapecios de Riemann.
+
+---
+
+> ### Integrantes
+>
+> | Estudiante | Carnet |
+> | :--- | :---: |
+> | **Rene Roberto Castañeda Mancia** | `00360422` |
+> | **Jaime Adonay Jimenez Climaco** | `00081622` |
+> | **Diego Alejandro Castro Recinos** | `00182122` |
 
 ---
 
@@ -219,4 +229,3 @@ La aplicación implementa una arquitectura cliente-servidor desacoplada entre pr
    [ IntegralApp actualiza etiquetas ] ◄───────────────────────────┘
    [ PlotPanel renderiza curva y trapecios ]
 ```
-

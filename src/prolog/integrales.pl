@@ -1,5 +1,11 @@
 /*
   SISTEMA SOLUCIONADOR DE INTEGRALES - Programacion Declarativa 02/2026
+
+  Estudiantes:
+  Rene Roberto Castañeda Mancia 00360422
+  Jaime Adonay Jimenez Climaco 00081622
+  Diego Alejandro Castro Recinos 00182122
+
   Motor simbolico, evaluacion y calculo numerico: exclusivamente SWI-Prolog.
   Java actua solo como interfaz grafica y cliente del proceso.
 
