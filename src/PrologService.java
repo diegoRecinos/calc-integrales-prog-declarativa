@@ -1,9 +1,12 @@
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,12 +24,107 @@ public class PrologService {
 
     /**
      * Detecta el ejecutable de SWI-Prolog en el entorno del sistema.
-     * Si está configurada la variable de entorno SWIPL_EXE la utiliza;
-     * de lo contrario, asume "swipl" disponible en el PATH del sistema.
+     * 1. Variable de entorno SWIPL_EXE si está configurada.
+     * 2. Comprueba si "swipl" responde en el PATH del sistema.
+     * 3. En Windows, comprueba rutas habituales de instalación:
+     *    C:\Program Files\swipl\bin\swipl.exe
+     *    C:\Program Files (x86)\swipl\bin\swipl.exe
+     * 4. De lo contrario, asume "swipl".
      */
     public static String detectarEjecutableProlog() {
         String entorno = System.getenv("SWIPL_EXE");
-        return (entorno != null && !entorno.trim().isEmpty()) ? entorno.trim() : "swipl";
+        if (entorno != null && !entorno.trim().isEmpty()) {
+            return entorno.trim();
+        }
+
+        // Comprobar si "swipl" responde en el PATH
+        try {
+            Process test = new ProcessBuilder("swipl", "--version").start();
+            if (test.waitFor(1, TimeUnit.SECONDS) && test.exitValue() == 0) {
+                return "swipl";
+            }
+        } catch (Exception ignored) {
+        }
+
+        // Rutas habituales en Windows si no se marcó "Add to PATH"
+        String os = System.getProperty("os.name", "").toLowerCase();
+        if (os.contains("win")) {
+            String[] rutasWin = {
+                    "C:\\Program Files\\swipl\\bin\\swipl.exe",
+                    "C:\\Program Files (x86)\\swipl\\bin\\swipl.exe",
+                    System.getenv("LOCALAPPDATA") != null
+                            ? System.getenv("LOCALAPPDATA") + "\\Programs\\swipl\\bin\\swipl.exe"
+                            : null
+            };
+            for (String ruta : rutasWin) {
+                if (ruta != null && Files.isRegularFile(Paths.get(ruta))) {
+                    return ruta;
+                }
+            }
+        }
+
+        return "swipl";
+    }
+
+    /**
+     * Localiza de manera inteligente el archivo de reglas integrales.pl.
+     * Busca en cascada:
+     * 1. Ruta relativa estándar en desarrollo: "src/prolog/integrales.pl"
+     * 2. Ruta relativa en ejecución: "prolog/integrales.pl"
+     * 3. Junto al archivo JAR o directorio de ejecución.
+     * 4. Fallback: Si se ejecuta desde un .jar independiente,
+     *    extrae integrales.pl de los recursos internos a un archivo temporal.
+     */
+    public static String detectarArchivoProlog() {
+        // 1. src/prolog/integrales.pl
+        Path pSrc = Paths.get("src", "prolog", "integrales.pl");
+        if (Files.isRegularFile(pSrc)) {
+            return pSrc.toString();
+        }
+
+        // 2. prolog/integrales.pl
+        Path pProlog = Paths.get("prolog", "integrales.pl");
+        if (Files.isRegularFile(pProlog)) {
+            return pProlog.toString();
+        }
+
+        // 3. integrales.pl en la raíz actual
+        Path pRaiz = Paths.get("integrales.pl");
+        if (Files.isRegularFile(pRaiz)) {
+            return pRaiz.toString();
+        }
+
+        // 4. Junto al JAR o directorio de clases
+        try {
+            var codeSource = PrologService.class.getProtectionDomain().getCodeSource();
+            if (codeSource != null && codeSource.getLocation() != null) {
+                Path baseDir = Paths.get(codeSource.getLocation().toURI()).getParent();
+                if (baseDir != null) {
+                    Path p1 = baseDir.resolve("src").resolve("prolog").resolve("integrales.pl");
+                    if (Files.isRegularFile(p1)) return p1.toString();
+                    Path p2 = baseDir.resolve("prolog").resolve("integrales.pl");
+                    if (Files.isRegularFile(p2)) return p2.toString();
+                    Path p3 = baseDir.resolve("integrales.pl");
+                    if (Files.isRegularFile(p3)) return p3.toString();
+                }
+            }
+        } catch (Exception ignored) {
+        }
+
+        // 5. Fallback: extraer del interior del JAR
+        try (InputStream in = PrologService.class.getResourceAsStream("/prolog/integrales.pl")) {
+            if (in != null) {
+                Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"), "calc_integrales");
+                Files.createDirectories(tempDir);
+                Path tempFile = tempDir.resolve("integrales.pl");
+                Files.copy(in, tempFile, StandardCopyOption.REPLACE_EXISTING);
+                tempFile.toFile().deleteOnExit();
+                return tempFile.toAbsolutePath().toString();
+            }
+        } catch (Exception ignored) {
+        }
+
+        return "src/prolog/integrales.pl";
     }
 
     /**
