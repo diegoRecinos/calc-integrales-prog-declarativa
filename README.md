@@ -229,3 +229,4 @@ La aplicación implementa una arquitectura cliente-servidor desacoplada entre pr
    [ IntegralApp actualiza etiquetas ] ◄───────────────────────────┘
    [ PlotPanel renderiza curva y trapecios ]
 ```
+
