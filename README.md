@@ -30,16 +30,17 @@ calc-integrales-prog-declarativa/
 │   │   └── MANIFEST.MF       # Declaración de Main-Class: IntegralApp para el .jar ejecutable
 │   └── prolog/
 │       └── integrales.pl     # Base de conocimiento: reglas de integración, evaluación y cálculo numérico
-├── out/
-│   └── artifacts/            # Contiene el .jar ejecutable generado
+├── calc-integrales-prog-declarativa.jar # Archivo ejecutable directo
+├── ejecutar-windows.bat      # Script de ejecución rápida para Windows
+├── ejecutar-linux.sh         # Script de ejecución rápida para Linux / macOS
 └── README.md
 ```
 
 ### Organización modular en `src/`
 Las clases se estructuran de forma limpia y desacoplada dentro de la raíz de fuentes (`src/`) por diseño:
-- **Resolución flexible de rutas:** Permite localizar el archivo de conocimiento mediante su ruta relativa estándar (`src/prolog/integrales.pl`) o mediante el selector de archivos integrado.
-- **Detección por PATH o ruta directa:** Permite invocar `swipl` automáticamente si está registrado en las variables de entorno del sistema (`PATH`), o especificar la ruta ejecutable directa/relativa desde la propia interfaz gráfica.
-- **Portabilidad inmediata:** Garantiza que el proyecto abra, compile y ejecute sin configuraciones adicionales ni dependencias externas en IntelliJ IDEA, Apache NetBeans, VS Code o terminal pura.
+- **Resolución flexible de rutas:** Permite localizar el archivo de conocimiento mediante detección inteligente automática (busca en `src/prolog/integrales.pl`, junto al ejecutable, o directamente desde los recursos internos del `.jar`) y mediante el selector de archivos integrado.
+- **Detección por PATH o ruta directa:** Permite invocar `swipl` automáticamente si está registrado en el `PATH` o instalado en las rutas estándar de Windows (`C:\Program Files\swipl\bin\swipl.exe`), o especificar la ruta ejecutable directa desde la propia interfaz gráfica.
+- **Portabilidad inmediata:** Garantiza que el proyecto abra, compile y ejecute sin configuraciones adicionales ni dependencias externas en Windows, Linux, macOS, IntelliJ IDEA, Apache NetBeans o terminal pura.
 
 ---
 
@@ -61,22 +62,25 @@ Descarga SWI-Prolog desde su sitio oficial. Durante la instalación, habilita la
 swipl --version
 ```
 
-> **Flexibilidad de ejecución:** Si `swipl` no está en el `PATH`, no hay problema: en el campo **"Ejecutable swipl"** de la interfaz puedes indicar directamente la ruta completa al binario (por ejemplo `C:\Program Files\swipl\bin\swipl.exe`) o una ruta relativa.
+> **Flexibilidad de ejecución:** Si `swipl` no está en el `PATH`, no hay problema: el programa detecta automáticamente las rutas estándar de instalación de Windows (`C:\Program Files\swipl\bin\swipl.exe`) o puedes indicar directamente la ruta completa en el campo **"Ejecutable swipl"** de la interfaz.
 
 ### Paso 3. Abre la interfaz Java
-Puedes ejecutar la aplicación directamente desde la terminal en la carpeta del proyecto:
+Puedes ejecutar la aplicación de cualquiera de las siguientes formas:
+
+**Opción A — Con los scripts de ejecución directa (Recomendado):**
+- En **Windows**: haz doble clic en `ejecutar-windows.bat`.
+- En **Linux / macOS**: ejecuta `./ejecutar-linux.sh`.
+
+**Opción B — Mediante el archivo ejecutable `.jar`:**
 ```powershell
-java -jar out/artifacts/calc_integrales_prog_declarativa_jar/calc-integrales-prog-declarativa.jar
+java -jar calc-integrales-prog-declarativa.jar
 ```
-O bien compilar y ejecutar directamente desde los archivos fuente:
+
+**Opción C — Compilando desde el código fuente:**
 ```powershell
 javac -encoding UTF-8 -d bin src/*.java
 java -cp bin IntegralApp
 ```
-
-La interfaz cuenta con el panel **Conexión con Prolog**:
-- **Ejecutable swipl:** `swipl` (si está en PATH) o la ruta completa al ejecutable.
-- **Ruta al archivo .pl:** `src/prolog/integrales.pl` (ruta relativa por defecto). Puedes pulsar **"Examinar archivo Prolog..."** para seleccionarlo interactivamente.
 
 ### Paso 4. Haz el primer cálculo
 En la aplicación, ingresa o selecciona un ejemplo:
@@ -229,4 +233,3 @@ La aplicación implementa una arquitectura cliente-servidor desacoplada entre pr
    [ IntegralApp actualiza etiquetas ] ◄───────────────────────────┘
    [ PlotPanel renderiza curva y trapecios ]
 ```
-

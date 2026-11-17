@@ -41,7 +41,7 @@ public class IntegralApp extends JFrame {
     private final JTextField limiteA = new JTextField("0");
     private final JTextField limiteB = new JTextField("2");
     private final JTextField ejecutable = new JTextField(PrologService.detectarEjecutableProlog());
-    private final JTextField archivoProlog = new JTextField("src/prolog/integrales.pl");
+    private final JTextField archivoProlog = new JTextField(PrologService.detectarArchivoProlog());
     private final JComboBox<Ejemplo> ejemplos = new JComboBox<>();
 
     // Componentes de salida y visualización
@@ -294,8 +294,16 @@ public class IntegralApp extends JFrame {
 
         Path archivo = Paths.get(archivoProlog.getText().trim()).toAbsolutePath().normalize();
         if (!Files.isRegularFile(archivo)) {
-            mensaje("No se encontró integrales.pl. Selecciónalo con «Examinar archivo Prolog».");
-            return;
+            // Intentar autodetección si la ruta ingresada no existe
+            String detectada = PrologService.detectarArchivoProlog();
+            Path archivoDetectado = Paths.get(detectada).toAbsolutePath().normalize();
+            if (Files.isRegularFile(archivoDetectado)) {
+                archivo = archivoDetectado;
+                archivoProlog.setText(detectada);
+            } else {
+                mensaje("No se encontró integrales.pl. Selecciónalo con «Examinar archivo Prolog».");
+                return;
+            }
         }
 
         String swipl = ejecutable.getText().trim();
@@ -306,6 +314,7 @@ public class IntegralApp extends JFrame {
 
         final double limiteInf = a;
         final double limiteSup = b;
+        final Path archivoPrologFinal = archivo;
 
         // Actualizar estado de la interfaz antes de iniciar
         calcular.setEnabled(false);
@@ -317,7 +326,7 @@ public class IntegralApp extends JFrame {
         SwingWorker<Resultado, Void> tarea = new SwingWorker<Resultado, Void>() {
             @Override
             protected Resultado doInBackground() throws Exception {
-                return PrologService.consultar(swipl, archivo, expr, limiteInf, limiteSup);
+                return PrologService.consultar(swipl, archivoPrologFinal, expr, limiteInf, limiteSup);
             }
 
             @Override
