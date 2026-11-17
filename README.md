@@ -1,6 +1,6 @@
 # Sistema para resolver integrales — Proyecto final 02/2026
 
-Base de conocimiento en SWI-Prolog, interfaz gráfica Java Swing, comunicación desacoplada Java–Prolog, cálculo de primitivas simbólicas, integral definida, área geométrica aproximada con cambio de signo, visualización gráfica de la curva y trapecios de Riemann, catálogo de pruebas y compatibilidad para Windows/Linux/macOS.
+Base de conocimiento en SWI-Prolog, interfaz gráfica Java Swing, cálculo de primitivas simbólicas, integral definida, área geométrica aproximada con cambio de signo, visualización gráfica de la curva y trapecios de Riemann.
 
 ---
 
